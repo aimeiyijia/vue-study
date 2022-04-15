@@ -10,6 +10,7 @@ import {
 import { updateListeners } from '../vdom/helpers/index'
 
 export function initEvents (vm: Component) {
+  // vm._events表示的是父组件绑定在当前组件上的事件。
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
@@ -47,6 +48,7 @@ export function updateComponentListeners (
   target = vm
   updateListeners(listeners, oldListeners || {}, add, remove, createOnceHandler, vm)
   target = undefined
+  console.log(vm, '45678')
 }
 
 export function eventsMixin (Vue: Class<Component>) {

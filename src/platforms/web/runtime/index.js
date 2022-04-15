@@ -15,6 +15,8 @@ import {
   isUnknownElement
 } from 'web/util/index'
 
+console.log('web端入口渲染')
+
 import { patch } from './patch'
 import platformDirectives from './directives/index'
 import platformComponents from './components/index'

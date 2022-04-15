@@ -23,18 +23,21 @@ export function initMixin (Vue: Class<Component>) {
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
       startTag = `vue-perf-start:${vm._uid}`
       endTag = `vue-perf-end:${vm._uid}`
+      // mark() 方法在浏览器的性能缓冲区中使用给定名称添加一个timestamp(时间戳) 。
       mark(startTag)
     }
 
     // a flag to avoid this being observed
     vm._isVue = true
     // merge options
+    // 当前实例是组件时才是true
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 合并选项
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -47,6 +50,7 @@ export function initMixin (Vue: Class<Component>) {
     } else {
       vm._renderProxy = vm
     }
+    console.log(vm, '实例')
     // expose real self
     vm._self = vm
     initLifecycle(vm)
@@ -94,6 +98,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
+
     const cachedSuperOptions = Ctor.superOptions
     if (superOptions !== cachedSuperOptions) {
       // super option changed,
@@ -111,6 +116,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
       }
     }
   }
+  console.log(options, '选项')
   return options
 }
 

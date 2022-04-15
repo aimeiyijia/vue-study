@@ -33,25 +33,37 @@ export function initLifecycle (vm: Component) {
   const options = vm.$options
 
   // locate first non-abstract parent
+  // 定位第一个抽象组件
+  // 抽象组件：不会渲染一个Dom元素
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }
+    // 子实例被放入父实例$children中
     parent.$children.push(vm)
   }
-
+  // 当前组件的父实例
   vm.$parent = parent
+  // 当前组件实例的根Vue实例，没有父实例那就是自己
   vm.$root = parent ? parent.$root : vm
 
+  // 当前组件实例的子组件实例，无顺序，无状态
   vm.$children = []
+  // 当前组件实例中注册的refs属性
   vm.$refs = {}
 
+  // 组件实例的watcher对象
   vm._watcher = null
+  // 表示keep-alive中组件状态，如被激活，该值为false,反之为true
   vm._inactive = null
+  // 也是表示keep-alive中组件状态的属性。
   vm._directInactive = false
+  // 当前实例是否已完成挂载
   vm._isMounted = false
+  // 当前实例是否已销毁
   vm._isDestroyed = false
+  // 当前实例是否正在被销毁
   vm._isBeingDestroyed = false
 }
 

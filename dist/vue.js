@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.14
- * (c) 2014-2021 Evan You
+ * (c) 2014-2022 Evan You
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -46,7 +46,7 @@
 
   /**
    * Quick object check - this is primarily used to tell
-   * Objects from primitive values when we know the value
+   * objects from primitive values when we know the value
    * is a JSON-compliant type.
    */
   function isObject (obj) {
@@ -3776,6 +3776,7 @@
   /*  */
 
   function initEvents (vm) {
+    // vm._events表示的是父组件绑定在当前组件上的事件。
     vm._events = Object.create(null);
     vm._hasHookEvent = false;
     // init parent attached events
@@ -3813,6 +3814,7 @@
     target = vm;
     updateListeners(listeners, oldListeners || {}, add, remove$1, createOnceHandler, vm);
     target = undefined;
+    console.log(vm, '45678');
   }
 
   function eventsMixin (Vue) {
@@ -3925,25 +3927,37 @@
     var options = vm.$options;
 
     // locate first non-abstract parent
+    // 定位第一个抽象组件
+    // 抽象组件：不会渲染一个Dom元素
     var parent = options.parent;
     if (parent && !options.abstract) {
       while (parent.$options.abstract && parent.$parent) {
         parent = parent.$parent;
       }
+      // 子实例被放入父实例$children中
       parent.$children.push(vm);
     }
-
+    // 当前组件的父实例
     vm.$parent = parent;
+    // 当前组件实例的根Vue实例，没有父实例那就是自己
     vm.$root = parent ? parent.$root : vm;
 
+    // 当前组件实例的子组件实例，无顺序，无状态
     vm.$children = [];
+    // 当前组件实例中注册的refs属性
     vm.$refs = {};
 
+    // 组件实例的watcher对象
     vm._watcher = null;
+    // 表示keep-alive中组件状态，如被激活，该值为false,反之为true
     vm._inactive = null;
+    // 也是表示keep-alive中组件状态的属性。
     vm._directInactive = false;
+    // 当前实例是否已完成挂载
     vm._isMounted = false;
+    // 当前实例是否已销毁
     vm._isDestroyed = false;
+    // 当前实例是否正在被销毁
     vm._isBeingDestroyed = false;
   }
 
@@ -4982,18 +4996,21 @@
       if (config.performance && mark) {
         startTag = "vue-perf-start:" + (vm._uid);
         endTag = "vue-perf-end:" + (vm._uid);
+        // mark() 方法在浏览器的性能缓冲区中使用给定名称添加一个timestamp(时间戳) 。
         mark(startTag);
       }
 
       // a flag to avoid this being observed
       vm._isVue = true;
       // merge options
+      // 当前实例是组件时才是true
       if (options && options._isComponent) {
         // optimize internal component instantiation
         // since dynamic options merging is pretty slow, and none of the
         // internal component options needs special treatment.
         initInternalComponent(vm, options);
       } else {
+        // 合并选项
         vm.$options = mergeOptions(
           resolveConstructorOptions(vm.constructor),
           options || {},
@@ -5004,6 +5021,7 @@
       {
         initProxy(vm);
       }
+      console.log(vm, '实例');
       // expose real self
       vm._self = vm;
       initLifecycle(vm);
@@ -5051,6 +5069,7 @@
     var options = Ctor.options;
     if (Ctor.super) {
       var superOptions = resolveConstructorOptions(Ctor.super);
+
       var cachedSuperOptions = Ctor.superOptions;
       if (superOptions !== cachedSuperOptions) {
         // super option changed,
@@ -5068,6 +5087,7 @@
         }
       }
     }
+    console.log(options, '选项');
     return options
   }
 
@@ -5084,6 +5104,7 @@
     return modified
   }
 
+  // new Vue()
   function Vue (options) {
     if (!(this instanceof Vue)
     ) {
@@ -5092,7 +5113,9 @@
     this._init(options);
   }
 
+  // import Vue from 'vue'，这里就会执行，给vue.prototype添加各种属性
   initMixin(Vue);
+  // 绑定实例方法等
   stateMixin(Vue);
   eventsMixin(Vue);
   lifecycleMixin(Vue);
@@ -7620,7 +7643,9 @@
     }
     var on = vnode.data.on || {};
     var oldOn = oldVnode.data.on || {};
-    target$1 = vnode.elm;
+    // vnode is empty when removing all listeners,
+    // and use old vnode dom element
+    target$1 = vnode.elm || oldVnode.elm;
     normalizeEvents(on);
     updateListeners(on, oldOn, add$1, remove$2, createOnceHandler$1, vnode.context);
     target$1 = undefined;
@@ -7628,7 +7653,8 @@
 
   var events = {
     create: updateDOMListeners,
-    update: updateDOMListeners
+    update: updateDOMListeners,
+    destroy: function (vnode) { return updateDOMListeners(vnode, emptyNode); }
   };
 
   /*  */
@@ -9065,6 +9091,8 @@
 
   /*  */
 
+  console.log('web端入口渲染');
+
   // install platform specific utils
   Vue.config.mustUseProp = mustUseProp;
   Vue.config.isReservedTag = isReservedTag;
@@ -9180,7 +9208,7 @@
       }
     }
     if (staticClass) {
-      el.staticClass = JSON.stringify(staticClass);
+      el.staticClass = JSON.stringify(staticClass.replace(/\s+/g, ' ').trim());
     }
     var classBinding = getBindingAttr(el, 'class', false /* getStatic */);
     if (classBinding) {
@@ -12012,3 +12040,4 @@
   return Vue;
 
 }));
+//# sourceMappingURL=vue.js.map
